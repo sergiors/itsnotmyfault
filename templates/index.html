@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>It's not my fault</h1>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="alert alert-success list-unstyled">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% if registrations %}
+<form method="post" action="{{ url_for('actions') }}">
+    <table class="table mt-5">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="select_all" /></th>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Curso</th>
+                <th>Progresso</th>
+                <th>Pageviews</th>
+                <th>Gerenciado por</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in registrations %}
+                <tr>
+                    <td><input class="items" type="checkbox" name="items[]" value="{{ r[0] }}" /></td>
+                    <td>{{ r[0] }}</td>
+                    <td>{{ r[1] }}</td>
+                    <td>{{ r[2] }}</td>
+                    <td>{{ r[3]|int }}%</td>
+                    <td>{{ r[4]|count if r[4] != None else '0' }} de {{ r[5]|count }}</td>
+                    <td>{{ r[6] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="btn-group mb-5">
+        <button type="submit" name="type" value="set_free" class="btn btn-primary">Liberar</button>
+        <button type="submit" name="type" value="mark_as_complete" class="btn btn-secondary">Marcar como completa</button>
+        <button type="submit" name="type" value="fix_pagination" class="btn btn-info">Arrumar paginação</button>
+        <button type="submit" name="type" value="delete" class="btn btn-danger">Excluir</button>
+    </div>
+</form>
+
+<script>
+(() => {
+    boxes = Array.from(document.querySelectorAll('.items'))
+    btn = document.querySelector('#select_all')
+    btn.addEventListener('click', () => boxes.forEach(b => b.checked = !b.checked))
+
+})()
+</script>
+{% endif %}
+
+<form method="post">
+  <div class="form-group">
+    <textarea class="form-control" name="textarea" rows="3"></textarea>
+  </div>
+  <button class="btn btn-primary" type="submit">Buscar</button>
+</form>
+{% endblock %}
